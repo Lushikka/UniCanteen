@@ -1,4 +1,4 @@
-/* Reset */
+
 * {
   margin: 0;
   padding: 0;
@@ -16,13 +16,13 @@ header {
   padding: 20px 25px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   flex-wrap: nowrap;
-    overflow-x: auto;   /* allow horizontal scroll if needed */
+    overflow-x: auto;   
   white-space: nowrap; 
 }
 .logo span {
   margin-top: 5px;
   font-weight: bold;
-  color: white;   /* or your theme color */
+  color: white;   
 }
 
 
@@ -34,16 +34,16 @@ header {
 
 .logo img {
   
-  height: 50px;   /* set fixed height */
-  width: auto;    /* keep aspect ratio */
-  vertical-align: middle;  /* aligns with text */
-   margin-right: -20px;  /* 👈 controls space between logo & text */
+  height: 50px;  
+  width: auto;    
+  vertical-align: middle;  
+   margin-right: -20px;  
 }
 
 nav {
   display: flex;
-  gap: 15px;   /* control spacing between links */
-  flex-shrink: 0; /* allow shrink */
+  gap: 15px;   
+  flex-shrink: 0; 
 }
 
 nav a {
@@ -58,7 +58,7 @@ nav a {
 }
 @media (max-width: 1024px) {
   nav {
-    gap: 12px;  /* reduce gap slightly instead of font */
+    gap: 12px;  
   }
 }
 @media (max-width: 768px) {
@@ -76,7 +76,7 @@ nav a:hover {
 
 /* Hero Section */
 .hero {
-  background: url('/Images/bg.jpg') center/cover no-repeat;
+  background: url(/Frontend/Images/bg.jpg) center/cover no-repeat;
   color: white;
   text-align: center;
   padding: 120px 20px;
@@ -87,10 +87,10 @@ nav a:hover {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;g
+  width: 100%;
   height: 135%;
-  background:rgba(40, 85, 41, 0.6); /* same as #285529 with 60% opacity */
-   z-index: 1; /* sits above background */
+  background:rgba(40, 85, 41, 0.6); 
+   z-index: 1; 
 }
 
 .hero::after {
@@ -126,8 +126,7 @@ nav a:hover {
 .card-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;  /* centers the button under the card */
-}
+  align-items: center; } 
 
 .card {
   background: white;
@@ -148,10 +147,10 @@ nav a:hover {
 }
 .overlay {
   position: absolute;
-  bottom: 90px;       /* you can also use top: 0 if you want top overlay */
+  bottom: 90px;       
   left: 0;
   width: 100%;
-  height: 40%;     /* height of overlay */
+  height: 40%;  
   display: flex;
   justify-content: center;
   align-items: center;
@@ -159,11 +158,11 @@ nav a:hover {
   font-size: 1.2rem;
   font-weight: bold;
   text-align: center;
-  border-radius: 0 0 8px 8px;  /* match image border */
+  border-radius: 0 0 8px 8px;  
 }
 
 .card-wrapper button {
-  margin-top: 10px;  /* space between card and button */
+  margin-top: 10px;  
   background: #2baa40;
   border: none;
   color: white;
