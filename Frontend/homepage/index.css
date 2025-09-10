@@ -192,6 +192,16 @@ nav a:hover {
     width: 100%;
     
 }
+footer {
+   background-color: #f5f5f5;
+  text-align: center;
+  padding: 1em;
+  background: #ffffff;
+  font-size: 1em;
+  color: #000000;
+  
+  
+}
 
 .footer-text {
     margin: 0;
