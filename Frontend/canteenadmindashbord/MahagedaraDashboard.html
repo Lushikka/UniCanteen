@@ -34,18 +34,22 @@
   <!-- Stats -->
   <div class="stats">
     <div class="stat-card">
-      <h3>3</h3>
+      <h3 id="totalItems">0</h3>
       <p>Total Items</p>
     </div>
     <div class="stat-card">
-      <h3>15</h3>
+      <h3 id="availableItems">0</h3>
       <p>Available Items</p>
     </div>
     <div class="stat-card">
-      <h3>12</h3>
+      <h3 id="unavailableItems">0</h3>
       <p>Unavailable Items</p>
     </div>
   </div>
+
+  <script>
+    window.CANTEEN_ID = 2; // set to Mahagedara's actual canteen_id
+  </script>
 
   <!-- Add Button -->
   <div class="add-btn"><span>＋</span> Add New Item</div>

@@ -51,11 +51,10 @@
             
             const formData = {
                 id: document.getElementById('itemId').value,
-                name: this.itemName.value,
-                description: this.itemDesc.value,
+                item_name: this.itemName.value,
                 price: parseFloat(this.itemPrice.value),
-                type: document.querySelector('input[name="itemType"]:checked').value,
-                available: this.itemAvailable.checked
+                type: document.querySelector('input[name="itemType"]:checked').value === 'veg' ? 'Veg' : 'Non-Veg',
+                status: this.itemAvailable.checked ? 'Available' : 'Unavailable'
             };
 
             window.parent.postMessage({
@@ -69,11 +68,11 @@
             if (event.data.type === 'editItemData') {
                 const item = event.data.item;
                 document.getElementById('itemId').value = item.id;
-                document.getElementById('itemName').value = item.name;
-                document.getElementById('itemDesc').value = item.description;
+                document.getElementById('itemName').value = item.item_name || item.name;
+                document.getElementById('itemDesc').value = item.description || '';
                 document.getElementById('itemPrice').value = item.price;
-                document.getElementById(item.type === 'veg' ? 'typeVeg' : 'typeNonVeg').checked = true;
-                document.getElementById('itemAvailable').checked = item.available;
+                document.getElementById(item.type && item.type.toLowerCase().includes('veg') ? 'typeVeg' : 'typeNonVeg').checked = true;
+                document.getElementById('itemAvailable').checked = (item.status === 'Available');
             }
         });
     </script>

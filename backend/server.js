@@ -8,7 +8,7 @@ const app = express();
 // Middleware
 app.use(cors({
     origin: '*',
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
 app.use(bodyParser.json());
@@ -135,39 +135,14 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date() });
 });
 
-// 404 handler - Route not found
-app.use((req, res, next) => {
-    res.status(404).json({
-        success: false,
-        message: 'Route not found'
-    });
-});
-
-// 500 handler - Server errors
-app.use((err, req, res, next) => {
-    console.error('Server error:', err.stack);
-    res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
-});
-
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log('Press Ctrl+C to stop the server');
-});
-
 // Add this with your other endpoints
 app.post('/add-menu-item', async (req, res) => {
-    const { name, description, price, type, available } = req.body;
+    const { item_name, price, type, status, canteen_id } = req.body;
 
     try {
         const result = await pool.query(
-            'INSERT INTO menu_items (name, description, price, type, available) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [name, description, price, type, available]
+            'INSERT INTO menu_items (item_name, price, type, status, canteen_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [item_name, price, type, status, canteen_id]
         );
 
         res.json({
@@ -177,32 +152,31 @@ app.post('/add-menu-item', async (req, res) => {
         });
     } catch (err) {
         console.error('Error adding menu item:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to add menu item',
-            error: err.message
-        });
+        res.status(500).json({ success: false, message: 'Failed to add menu item', error: err.message });
     }
 });
-// Add these new endpoints after existing code
 
-// Get all menu items
+// Get all menu items (optionally filter by canteen_id)
 app.get('/menu-items', async (req, res) => {
+    const { canteen_id } = req.query;
     try {
-        const result = await pool.query('SELECT * FROM menu_items ORDER BY id DESC');
-        const stats = await pool.query(`
+        const params = [];
+        let sql = 'SELECT * FROM menu_items';
+        if (canteen_id) {
+            sql += ' WHERE canteen_id = $1';
+            params.push(canteen_id);
+        }
+        sql += ' ORDER BY id DESC';
+
+        const result = await pool.query(sql, params);
+        const statsSql = `
             SELECT 
                 COUNT(*) as total,
-                COUNT(CASE WHEN available = true THEN 1 END) as available,
-                COUNT(CASE WHEN available = false THEN 1 END) as unavailable
-            FROM menu_items
-        `);
-        
-        res.json({
-            success: true,
-            items: result.rows,
-            stats: stats.rows[0]
-        });
+                COUNT(CASE WHEN status = 'Available' THEN 1 END) as available,
+                COUNT(CASE WHEN status = 'Unavailable' THEN 1 END) as unavailable
+            FROM menu_items ${canteen_id ? 'WHERE canteen_id = $1' : ''}`;
+        const stats = await pool.query(statsSql, params);
+        res.json({ success: true, items: result.rows, stats: stats.rows[0] });
     } catch (err) {
         console.error('Error fetching menu items:', err);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -212,14 +186,14 @@ app.get('/menu-items', async (req, res) => {
 // Update menu item
 app.put('/menu-items/:id', async (req, res) => {
     const { id } = req.params;
-    const { name, description, price, type, available } = req.body;
+    const { item_name, price, type, status } = req.body;
 
     try {
         const result = await pool.query(
             `UPDATE menu_items 
-             SET name = $1, description = $2, price = $3, type = $4, available = $5
-             WHERE id = $6 RETURNING *`,
-            [name, description, price, type, available, id]
+             SET item_name = $1, price = $2, type = $3, status = $4
+             WHERE id = $5 RETURNING *`,
+            [item_name, price, type, status, id]
         );
 
         if (result.rows.length > 0) {
@@ -233,23 +207,23 @@ app.put('/menu-items/:id', async (req, res) => {
     }
 });
 
-// Toggle item visibility
+// Toggle item visibility (status)
 app.patch('/menu-items/:id/toggle', async (req, res) => {
     const { id } = req.params;
-    
     try {
         const result = await pool.query(
-            'UPDATE menu_items SET available = NOT available WHERE id = $1 RETURNING *',
+            `UPDATE menu_items 
+             SET status = CASE WHEN status = 'Available' THEN 'Unavailable' ELSE 'Available' END
+             WHERE id = $1 RETURNING *`,
             [id]
         );
-
         if (result.rows.length > 0) {
             res.json({ success: true, item: result.rows[0] });
         } else {
             res.status(404).json({ success: false, message: 'Item not found' });
         }
     } catch (err) {
-        console.error('Error toggling item visibility:', err);
+        console.error('Error toggling item status:', err);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
@@ -257,13 +231,8 @@ app.patch('/menu-items/:id/toggle', async (req, res) => {
 // Delete menu item
 app.delete('/menu-items/:id', async (req, res) => {
     const { id } = req.params;
-
     try {
-        const result = await pool.query(
-            'DELETE FROM menu_items WHERE id = $1 RETURNING *',
-            [id]
-        );
-
+        const result = await pool.query('DELETE FROM menu_items WHERE id = $1 RETURNING *', [id]);
         if (result.rows.length > 0) {
             res.json({ success: true, message: 'Item deleted successfully' });
         } else {
@@ -273,66 +242,37 @@ app.delete('/menu-items/:id', async (req, res) => {
         console.error('Error deleting menu item:', err);
         res.status(500).json({ success: false, message: 'Server error' });
     }
-    // ...existing code...
+});
 
 // Get single menu item
 app.get('/menu-items/:id', async (req, res) => {
     try {
-        const result = await pool.query(
-            'SELECT * FROM menu_items WHERE id = $1',
-            [req.params.id]
-        );
-        
+        const result = await pool.query('SELECT * FROM menu_items WHERE id = $1', [req.params.id]);
         if (result.rows.length > 0) {
-            res.json({
-                success: true,
-                item: result.rows[0]
-            });
+            res.json({ success: true, item: result.rows[0] });
         } else {
-            res.status(404).json({
-                success: false,
-                message: 'Item not found'
-            });
+            res.status(404).json({ success: false, message: 'Item not found' });
         }
     } catch (err) {
         console.error('Error:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Server error'
-        });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
-// Update menu item
-app.put('/menu-items/:id', async (req, res) => {
-    const { id } = req.params;
-    const { name, description, price, type, available } = req.body;
-
-    try {
-        const result = await pool.query(
-            `UPDATE menu_items 
-             SET name = $1, description = $2, price = $3, type = $4, available = $5
-             WHERE id = $6 RETURNING *`,
-            [name, description, price, type, available, id]
-        );
-        
-        if (result.rows.length > 0) {
-            res.json({
-                success: true,
-                item: result.rows[0]
-            });
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'Item not found'
-            });
-        }
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Server error'
-        });
-    }
+// 404 handler - Route not found
+app.use((req, res, next) => {
+    res.status(404).json({ success: false, message: 'Route not found' });
 });
+
+// 500 handler - Server errors
+app.use((err, req, res, next) => {
+    console.error('Server error:', err.stack);
+    res.status(500).json({ success: false, message: 'Internal server error', error: process.env.NODE_ENV === 'development' ? err.message : undefined });
+});
+
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log('Press Ctrl+C to stop the server');
 });

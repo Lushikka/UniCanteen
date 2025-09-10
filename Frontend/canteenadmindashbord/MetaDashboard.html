@@ -34,15 +34,15 @@
   <!-- Stats -->
   <div class="stats">
     <div class="stat-card">
-      <h3>3</h3>
+      <h3 id="totalItems">0</h3>
       <p>Total Items</p>
     </div>
     <div class="stat-card">
-      <h3>15</h3>
+      <h3 id="availableItems">0</h3>
       <p>Available Items</p>
     </div>
     <div class="stat-card">
-      <h3>12</h3>
+      <h3 id="unavailableItems">0</h3>
       <p>Unavailable Items</p>
     </div>
   </div>
@@ -122,6 +122,10 @@
       </tbody>
     </table>
   </div>
+
+  <script>
+    window.CANTEEN_ID = 1;
+  </script>
 
   <footer style="text-align:center; padding:20px; font-size:14px; color:#666;">
     © 2025 UniCanteen by MenuMasters | All rights reserved

@@ -56,11 +56,11 @@
         document.getElementById('menuForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = {
-                name: this.itemName.value,
-                description: this.itemDesc.value,
+                item_name: this.itemName.value,
                 price: parseFloat(this.itemPrice.value),
-                type: this.itemType.value,
-                available: this.itemAvailable.checked
+                type: this.itemType.value === 'veg' ? 'Veg' : 'Non-Veg',
+                status: this.itemAvailable.checked ? 'Available' : 'Unavailable',
+                canteen_id: (window.parent && window.parent.CANTEEN_ID) ? window.parent.CANTEEN_ID : 3
             };
             window.parent.postMessage({
                 type: 'formSubmission',
