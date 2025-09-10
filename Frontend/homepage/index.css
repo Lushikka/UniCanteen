@@ -163,6 +163,7 @@ nav a:hover {
 
 .card-wrapper button {
   margin-top: 10px;  
+  margin-bottom: 10px;
   background: #2baa40;
   border: none;
   color: white;
@@ -180,4 +181,46 @@ nav a:hover {
 
 .view-buttons span button:hover {
   background: #228b34;
+}
+.responsive-footer {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    
+}
+footer {
+   background-color: #f5f5f5;
+  text-align: center;
+  padding: 1em;
+  background: #ffffff;
+  font-size: 1em;
+  color: #000000;
+  
+  
+}
+
+.footer-text {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #0c0c0c;
+}
+
+/* Responsive breakpoints */
+@media screen and (max-width: 768px) {
+    .footer-text {
+        font-size: 0.95rem;
+        padding: 0 10px;
+    }
+}
+
+
+/* Ensure content doesn't hide behind footer */
+body {
+    margin-bottom: 60px; /* Height of footer */
+    min-height: 100vh;
+    position: relative;
 }
