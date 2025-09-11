@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API = (typeof window !== 'undefined' && window.API_BASE) ? String(window.API_BASE).replace(/\/$/, '') : 'http://localhost:3000';
     let modalContainer;
 
     // Initialize modal container
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Data loading and CRUD helpers
     async function loadMenuItems() {
         try {
-            const response = await fetch(`http://localhost:3000/menu-items?canteen_id=${encodeURIComponent(canteenId)}`);
+            const response = await fetch(`${API}/menu-items?canteen_id=${encodeURIComponent(canteenId)}`);
             const data = await response.json();
             if (data.success) {
                 renderMenuItems(data.items);
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.toggleItemVisibility = async function(id) {
         try {
-            const response = await fetch(`http://localhost:3000/menu-items/${id}/toggle`, { method: 'PATCH' });
+            const response = await fetch(`${API}/menu-items/${id}/toggle`, { method: 'PATCH' });
             if (response.ok) {
                 loadMenuItems();
             }
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.deleteMenuItem = async function(id) {
         if (confirm('Are you sure you want to delete this item?')) {
             try {
-                const response = await fetch(`http://localhost:3000/menu-items/${id}`, { method: 'DELETE' });
+                const response = await fetch(`${API}/menu-items/${id}`, { method: 'DELETE' });
                 if (response.ok) {
                     loadMenuItems();
                 }
@@ -96,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleAddFormSubmission(event) {
         if (event.data && event.data.type === 'formSubmission') {
             const formData = event.data.formData;
-            fetch('http://localhost:3000/add-menu-item', {
+            fetch(`${API}/add-menu-item`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -157,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Edit button handler - open modal and preload item
     window.editMenuItem = async function(itemId) {
         try {
-            const response = await fetch(`http://localhost:3000/menu-items/${itemId}`);
+            const response = await fetch(`${API}/menu-items/${itemId}`);
             const data = await response.json();
             if (!data.success) return;
 
@@ -193,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('message', async function(event) {
         if (event.data && event.data.type === 'editFormSubmission') {
             try {
-                const res = await fetch(`http://localhost:3000/menu-items/${event.data.formData.id}`, {
+                const res = await fetch(`${API}/menu-items/${event.data.formData.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(event.data.formData)
@@ -248,5 +249,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modalContainer) {
             closeModal();
         }
+    
     });
+    // wire logout
+		const logout = document.querySelector('.logout-btn');
+		if (logout) logout.addEventListener('click', ()=>{ window.location.href = '../Admin/AdminLogin.html'; });
 });

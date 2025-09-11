@@ -11,7 +11,7 @@
 
 	async function load() {
 		try {
-			const res = await fetch(`http://localhost:3000/menu-items?canteen_id=${encodeURIComponent(canteenId)}`);
+			const res = await fetch(`${(typeof window !== 'undefined' && window.API_BASE ? String(window.API_BASE).replace(/\/$/, '') : 'http://localhost:3000')}/menu-items?canteen_id=${encodeURIComponent(canteenId)}`);
 			const data = await res.json();
 			if (data.success) {
 				allItems = data.items;
@@ -99,5 +99,7 @@
 	if (filterNonVegBtn) filterNonVegBtn.addEventListener('click', () => { activeFilter = 'non-veg'; render(); });
 	if (clearFilterBtn) clearFilterBtn.addEventListener('click', () => { activeFilter = 'all'; if (searchInput) searchInput.value = ''; render(); });
 
+
+	
 	document.addEventListener('DOMContentLoaded', load);
 })();

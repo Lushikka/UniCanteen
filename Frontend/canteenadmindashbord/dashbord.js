@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API = (typeof window !== 'undefined' && window.API_BASE) ? String(window.API_BASE).replace(/\/$/, '') : 'http://localhost:3000';
     loadMenuItems();
     const addButton = document.querySelector('.add-btn');
     let modalContainer;
@@ -41,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = event.data.formData;
             console.log('Processing form data:', formData);
 
-            fetch('http://localhost:3000/add-menu-item', {
+            fetch(`${API}/add-menu-item`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -126,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadMenuItems() {
         try {
-            const response = await fetch('http://localhost:3000/menu-items');
+            const response = await fetch(`${API}/menu-items`);
             const data = await response.json();
             
             if (data.success) {
@@ -147,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle form submission from iframe
     window.handleFormSubmission = async function(formData) {
         try {
-            const response = await fetch('http://localhost:3000/add-menu-item', {
+            const response = await fetch(`${API}/add-menu-item`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -165,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Toggle item visibility
     window.toggleItemVisibility = async function(id) {
         try {
-            const response = await fetch(`http://localhost:3000/menu-items/${id}/toggle`, {
+            const response = await fetch(`${API}/menu-items/${id}/toggle`, {
                 method: 'PATCH'
             });
             
@@ -181,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.deleteMenuItem = async function(id) {
         if (confirm('Are you sure you want to delete this item?')) {
             try {
-                const response = await fetch(`http://localhost:3000/menu-items/${id}`, {
+                const response = await fetch(`${API}/menu-items/${id}`, {
                     method: 'DELETE'
                 });
                 
