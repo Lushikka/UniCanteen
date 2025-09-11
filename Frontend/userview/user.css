@@ -6,57 +6,94 @@
     font-family: "Segoe UI", Arial, sans-serif;
   }
   
-  /* Header */
+/* Header */
+header {
+  background: #2baa40;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  flex-wrap: nowrap;
+    overflow-x: auto;   
+  white-space: nowrap; 
+}
+.logo span {
+  margin-top: 5px;
+  font-weight: bold;
+  color: white;   
+}
+
+
+.logo {
+  display: flex;
+  align-items: center;
+ 
+} 
+
+.logo img {
+  
+  height: 50px;  
+  width: auto;    
+  vertical-align: middle;  
+   margin-right: -20px;  
+}
+
+nav {
+  display: flex;
+  gap: 15px;   
+  flex-shrink: 0; 
+}
+
+nav a {
+    
+  color: white;
+  text-decoration: none;
+  margin-left: 10px;
+  font-weight: bold;
+  transition: color 0.3s;
+  justify-content: space-between;
+  padding: 10px 12px;
+}
+@media (max-width: 1024px) {
+  nav {
+    gap: 12px;  
+  }
+}
+@media (max-width: 768px) {
+  nav {
+    gap: 10px;
+  }
   header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 20px;
-    background-color: #2e7d32;
-    color: white;
+    padding: 15px;
   }
-  
-  header .logo {
-    display: flex;
-    align-items: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-  
-  header .logo img {
-    height: 35px;
-    margin-right: 8px;
-  }
-  
-  header .nav-links a {
-    margin-left: 20px;
-    text-decoration: none;
-    color: white;
-    font-size: 0.95rem;
-    transition: opacity 0.3s ease;
-  }
-  
-  header .nav-links a:hover {
-    opacity: 0.8;
-  }
+}
+
+nav a:hover {
+  color: #ffeb3b;
+}
   
   /* Page wrapper */
   .page-wrapper {
     max-width: 900px;
     margin: 30px auto;
-    padding: 0 16px;
+    padding: 0 20px;
     text-align: center;
+    margin: 20px auto;
   }
   
   /* Welcome title */
   .page-wrapper h2 {
     background-color: #4caf50;
     color: white;
-    padding: 16px;
+    font-weight: bold;
+    padding: 30px;
     border-radius: 6px;
     font-size: 1.4rem;
     margin-bottom: 20px;
     text-transform: uppercase;
+    
   }
   
   /* Controls */
@@ -103,9 +140,12 @@
   /* Menu items */
   #publicItems {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit,1fr);
     gap: 20px;
     justify-content: center;
+    flex-direction: column;
+   
+    
   }
   
   .menu-card {
@@ -117,7 +157,11 @@
     background: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     transition: transform 0.2s ease;
-  }
+     width: 600px;        
+  max-width: 90%;     
+  margin: 0 auto;     
+}
+  
   
   .menu-card:hover {
     transform: translateY(-4px);

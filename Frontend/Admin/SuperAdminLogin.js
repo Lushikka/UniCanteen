@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API = (typeof window !== 'undefined' && window.API_BASE) ? String(window.API_BASE).replace(/\/$/, '') : 'http://localhost:3000';
     const form = document.getElementById('SuperAdminLoginForm');
     
     if (!form) {
@@ -13,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const username = form.username.value;
             const password = form.password.value;
 
-            const response = await fetch('http://localhost:3000/super-admin-login', {
+            const response = await fetch(`${API}/super-admin-login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 // Store super admin data in sessionStorage
                 sessionStorage.setItem('superAdminUser', JSON.stringify(data.userData));
-                window.location.href = './super-admin-dashboard.html';
+                window.location.href = '../superadmindash/super.html';
             } else {
                 handleError(new Error(data.message), 'unauthorized');
             }
