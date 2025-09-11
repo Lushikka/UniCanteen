@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             handleError(error, 'serverError');
         }
     });
+    
 
     // Basic username validation only (no enforced suffix)
     const usernameInput = document.getElementById('username');
@@ -106,4 +107,5 @@ function createErrorElement() {
         document.querySelector('button[type="submit"]')
     );
     return errorDiv;
+    
 }

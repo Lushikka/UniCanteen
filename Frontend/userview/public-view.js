@@ -99,5 +99,7 @@
 	if (filterNonVegBtn) filterNonVegBtn.addEventListener('click', () => { activeFilter = 'non-veg'; render(); });
 	if (clearFilterBtn) clearFilterBtn.addEventListener('click', () => { activeFilter = 'all'; if (searchInput) searchInput.value = ''; render(); });
 
+
+	
 	document.addEventListener('DOMContentLoaded', load);
 })();

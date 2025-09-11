@@ -249,5 +249,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modalContainer) {
             closeModal();
         }
+    
     });
+    // wire logout
+		const logout = document.querySelector('.logout-btn');
+		if (logout) logout.addEventListener('click', ()=>{ window.location.href = '../Admin/AdminLogin.html'; });
 });
