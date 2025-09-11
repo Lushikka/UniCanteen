@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API = (typeof window !== 'undefined' && window.API_BASE) ? String(window.API_BASE).replace(/\/$/, '') : 'http://localhost:3000';
     const form = document.getElementById('adminLoginForm');
 
     if (!form) {
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('http://localhost:3000/admin-login', {
+            const response = await fetch(`${API}/admin-login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,13 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Username validation (_admin suffix)
+    // Basic username validation only (no enforced suffix)
     const usernameInput = document.getElementById('username');
     if (usernameInput) {
         usernameInput.addEventListener('input', (e) => {
-            const value = e.target.value.toLowerCase();
-            if (value && !value.endsWith('_admin')) {
-                e.target.setCustomValidity('Username must end with _admin');
+            const value = e.target.value;
+            if (!value) {
+                e.target.setCustomValidity('Username is required');
             } else {
                 e.target.setCustomValidity('');
             }

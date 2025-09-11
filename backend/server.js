@@ -1,17 +1,25 @@
-require('dotenv').config(); // Load .env variables
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { Pool } = require('pg');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// PostgreSQL connection using Neon
+
+
+
+
+
+
+// Database config (hardcoded)
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    user: 'postgres',
+    host: 'localhost',
+    database: 'unicanteen',
+    password: 'nilu',
+    port: 5432
 });
-
 // Test database connection
 (async () => {
     try {
@@ -26,11 +34,12 @@ const pool = new Pool({
 
 // Middleware
 app.use(cors({
-    origin: '*',
+    origin: process.env.FRONTEND_ORIGIN || '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
 }));
 app.use(bodyParser.json());
+
 
 // Routes
 
@@ -241,7 +250,12 @@ app.use((err, req, res, next) => {
     });
 });
 
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Rejection:', reason);
+});
+
 // Start server
+const PORT = 3000; // fixed port, no env
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log('Press Ctrl+C to stop the server');
