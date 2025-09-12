@@ -81,6 +81,7 @@ nav a:hover {
     padding: 0 20px;
     text-align: center;
     margin: 20px auto;
+    padding-bottom: 80px;
   }
   
   /* Welcome title */
@@ -108,7 +109,7 @@ nav a:hover {
   .controls input {
     padding: 10px 14px;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 6px;gi
     flex: 1 1 220px;
     max-width: 300px;
   }
@@ -218,21 +219,19 @@ nav a:hover {
     position: fixed;
     bottom: 0;
     left: 0;
+    width: 100%;}
+    
+    
+/* Footer (fixed but not overlapping) */
+.responsive-footer {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    
-    
 }
-footer {
-   background-color: #f5f5f5;
-  text-align: center;
-  padding: 1em;
-  background: #ffffff;
-  font-size: 1em;
-  color: #000000;
-  
-  
-}
-
 .footer-text {
     margin: 0;
     font-size: 0.95rem;
