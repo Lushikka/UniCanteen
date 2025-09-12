@@ -1,13 +1,20 @@
+require('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 const app = express();
 
 
-
+// Use the connection string from the .env file. This is the only Pool initialization needed.
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  // Add SSL configuration for production databases like Heroku/Render/Supabase
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+});
 
 
 
@@ -26,6 +33,7 @@ const pool = new Pool({
         const client = await pool.connect();
         const res = await client.query('SELECT NOW()');
         console.log('Database connected! Current time:', res.rows[0]);
+        console.log('Database connected successfully!');
         client.release();
     } catch (err) {
         console.error('Database connection error:', err);
@@ -61,8 +69,17 @@ app.post('/admin-login', async (req, res) => {
             'SELECT * FROM canteen_admins WHERE username = $1 AND password = $2',
             [username, password]
         );
+        const result = await pool.query('SELECT * FROM canteen_admins WHERE username = $1', [username]);
 
         if (result.rows.length > 0) {
+            const admin = result.rows[0];
+            // WARNING: Storing and comparing plain text passwords is a major security risk.
+            // You should hash passwords with bcrypt when creating users and use bcrypt.compare() here.
+            // const isMatch = await bcrypt.compare(password, admin.password);
+            const isMatch = (password === admin.password); // Keep for now, but should be updated.
+
+            if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid username or password' });
+
             res.json({
                 success: true,
                 message: 'Login successful',
@@ -94,8 +111,17 @@ app.post('/super-admin-login', async (req, res) => {
             'SELECT * FROM super_admin WHERE username = $1 AND password = $2',
             [username, password]
         );
+        const result = await pool.query('SELECT * FROM super_admin WHERE username = $1', [username]);
 
         if (result.rows.length > 0) {
+            const superAdmin = result.rows[0];
+            // WARNING: Storing and comparing plain text passwords is a major security risk.
+            // You should hash passwords with bcrypt when creating users and use bcrypt.compare() here.
+            // const isMatch = await bcrypt.compare(password, superAdmin.password);
+            const isMatch = (password === superAdmin.password); // Keep for now, but should be updated.
+
+            if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid super admin credentials' });
+
             res.json({
                 success: true,
                 message: 'Super admin login successful',
@@ -256,6 +282,7 @@ process.on('unhandledRejection', (reason) => {
 
 // Start server
 const PORT = 3000; // fixed port, no env
+const PORT = process.env.PORT || 3001; // Using 3001 to avoid conflicts with React dev server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log('Press Ctrl+C to stop the server');
